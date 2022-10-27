@@ -1,23 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chchin <chchin@student.42kl.edu.my>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/26 13:33:11 by chchin            #+#    #+#             */
-/*   Updated: 2022/10/26 13:33:13 by chchin           ###   ########.fr       */
+/*   Created: 2022/10/27 11:39:37 by chchin            #+#    #+#             */
+/*   Updated: 2022/10/27 11:39:38 by chchin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	main(int argc, char **argv)
+int	ft_isdigit(const char *s)
 {
-	t_info	info;
+	while (*s)
+	{
+		if (*s < '0' || *s > '9')
+			return (FAILURE);
+		s++;
+	}
+	return (SUCCESS);
+}
 
-	memset(&info, 0, sizeof(info));
-	if (init_info(&info, argc, argv) != SUCCESS)
-		return (0);
-	init_philo(&info);
+int	ft_atoi(const char *s)
+{
+	int	num;
+
+	num = 0;
+	while (*s)
+		num = num * 10 + (*s++ - '0');
+	return (num);
 }

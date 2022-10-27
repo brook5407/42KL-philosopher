@@ -7,7 +7,6 @@
 # include <stdlib.h>
 # include <sys/time.h>
 # include <unistd.h>
-# include <limits.h>
 # include <stdbool.h>
 
 # define NC		"\e[0m"
@@ -16,8 +15,11 @@
 # define PURPLE	"\e[35m"
 # define CYAN	"\e[36m"
 
-# define MIN_ARGS			4
-# define MAX_ARGS			5
+# define MIN_ARGS	4
+# define MAX_ARGS	5
+
+# define FAILURE	0
+# define SUCCESS	1
 
 typedef enum e_state
 {
@@ -29,6 +31,18 @@ typedef enum e_state
 	TAKE_2 = 5,
 }	t_state;
 
+typedef struct s_philo
+{
+	int				id;
+	pthread_t		thread;
+	struct s_info	*info;
+	pthread_mutex_t	*left;
+	pthread_mutex_t	*right;
+	pthread_mutex_t	m_check;
+	int				count_eat;
+	time_t			last_eat;
+}	t_philo;
+
 typedef struct s_info
 {
 	int				num_of_philo;
@@ -37,25 +51,21 @@ typedef struct s_info
 	time_t			t_to_eat;
 	time_t			t_to_sleep;
 	int				num_must_eat;
-	time_t			t_end;
+	int				death;
 	pthread_mutex_t	m_finish;
 	pthread_mutex_t	m_write;
 	pthread_mutex_t	*m_fork;
-	t_philo			*philos;
+	t_philo			*philo;
 }	t_info;
 
-typedef struct s_philo
-{
-	int				id;
-	pthread_t		thread;
-	t_info			*info;
-	pthread_mutex_t	*left;
-	pthread_mutex_t	*right;
-	pthread_mutex_t	m_check;
-	int				count_eat;
-	time_t			last_eat;
-}	t_philo;
+int		ft_isdigit(const char *s);
+int		ft_atoi(const char *s);
 
-int	print_error(char *msg);
+time_t	get_current_ms(void);
+
+int		print_error(char *msg);
+void	print_status(t_philo *philo, time_t time, char *msg);
+int		init_info(t_info *info, int argc, char **argv);
+void	init_philo(t_info *info);
 
 #endif

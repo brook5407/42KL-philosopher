@@ -1,23 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   get.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chchin <chchin@student.42kl.edu.my>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/26 13:33:11 by chchin            #+#    #+#             */
-/*   Updated: 2022/10/26 13:33:13 by chchin           ###   ########.fr       */
+/*   Created: 2022/10/27 14:16:14 by chchin            #+#    #+#             */
+/*   Updated: 2022/10/27 14:16:15 by chchin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	main(int argc, char **argv)
+time_t	get_current_ms(void)
 {
-	t_info	info;
+	struct timeval	time;
 
-	memset(&info, 0, sizeof(info));
-	if (init_info(&info, argc, argv) != SUCCESS)
-		return (0);
-	init_philo(&info);
+	gettimeofday(&time, NULL);
+	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }

@@ -15,11 +15,12 @@
 int	print_error(char *msg)
 {
 	printf("%sERROR: %s.%s\n", RED, msg, NC);
-	return (0);
+	return (FAILURE);
 }
 
-void	print_status(t_philo *philo, char *msg)
+void	print_status(t_philo *philo, time_t time, char *msg)
 {
 	pthread_mutex_lock(&philo->info->m_write);
-
+	printf("%d\t%d\t%s\n", (int)time, philo->id + 1, msg);
+	pthread_mutex_unlock(&philo->info->m_write);
 }
