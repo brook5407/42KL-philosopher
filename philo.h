@@ -51,7 +51,8 @@ typedef struct s_info
 	time_t			t_to_eat;
 	time_t			t_to_sleep;
 	int				num_must_eat;
-	int				death;
+	int				num_eat_finish;
+	int				finish;
 	pthread_mutex_t	m_finish;
 	pthread_mutex_t	m_write;
 	pthread_mutex_t	*m_fork;
@@ -64,8 +65,9 @@ int		ft_atoi(const char *s);
 time_t	get_current_ms(void);
 
 int		print_error(char *msg);
-void	print_status(t_philo *philo, time_t time, char *msg);
+void	print_status(t_philo *philo, char *msg);
 int		init_info(t_info *info, int argc, char **argv);
 void	init_philo(t_info *info);
+void	create_philo(t_info *info);
 
 #endif

@@ -12,21 +12,41 @@
 
 #include "philo.h"
 
+void	*monitoring_must_eat(void *data)
+{
+	t_info	*info;
+
+	info = data;
+	while (!info->finish)
+	{
+		pthread_mutex_lock(&info->m_finish);
+		if (info->num_eat_finish == info->num_of_philo)
+			info->finish = 1;
+		pthread_mutex_unlock(&info->m_finish);
+	}
+	return (NULL);
+}
+
 void	*monitoring_thread(void *data)
 {
 	t_philo		*philo;
+	time_t		t_no_eat;
 
 	philo = data;
-	while (!philo->info->death)
+	while (!philo->info->finish)
 	{
 		pthread_mutex_lock(&philo->m_check);
 		pthread_mutex_lock(&philo->info->m_finish);
-		if (get_current_ms() >= philo->info->t_to_die && !philo->info->death)
+		t_no_eat = get_current_ms() - philo->last_eat;
+		if (t_no_eat >= philo->info->t_to_die && !philo->info->finish)
 		{
-			print_status(philo, get_current_ms(), "died");
-			philo->info->death = 1;
+			print_status(philo, "died");
+			philo->info->finish = 1;
 		}
+		pthread_mutex_unlock(&philo->info->m_finish);
+		pthread_mutex_unlock(&philo->m_check);
 	}
+	return (NULL);
 }
 
 void	create_philo(t_info *info)
@@ -40,7 +60,13 @@ void	create_philo(t_info *info)
 	{
 		pthread_create(&info->philo[i].thread, NULL, philo, &info->philo[i]);
 		info->philo[i].last_eat = info->t_start;
-		pthread_create(&thread, NULL, monitoring_thread, &info->philo[i])
+		pthread_create(&thread, NULL, monitoring_thread, &info->philo[i]);
+		pthread_detach(thread);
+		i++;
+	}
+	if (info->num_must_eat != 0)
+	{
+		pthread_create(&thread, NULL, monitoring_must_eat, &info);
 		pthread_detach(thread);
 	}
 }
