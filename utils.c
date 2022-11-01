@@ -32,3 +32,17 @@ int	ft_atoi(const char *s)
 		num = num * 10 + (*s++ - '0');
 	return (num);
 }
+
+int	print_error(char *msg)
+{
+	printf("%sERROR: %s.%s\n", RED, msg, NC);
+	return (FAILURE);
+}
+
+void	print_status(t_philo *philo, char *msg)
+{
+	pthread_mutex_lock(&philo->info->m_write);
+	printf("%d\t%d\t%s\n", (int)get_timestamp(philo->info->t_start), \
+	philo->id + 1, msg);
+	pthread_mutex_unlock(&philo->info->m_write);
+}

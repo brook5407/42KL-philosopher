@@ -21,4 +21,7 @@ int	main(int argc, char **argv)
 		return (0);
 	init_philo(&info);
 	create_philo(&info);
+	join_philo(&info);
+	free_philo(&info);
+	return (0);
 }

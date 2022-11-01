@@ -12,10 +12,15 @@
 
 #include "philo.h"
 
-time_t	get_current_ms(void)
+time_t	get_cur_time(void)
 {
 	struct timeval	time;
 
 	gettimeofday(&time, NULL);
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+}
+
+time_t	get_timestamp(time_t start)
+{
+	return (get_cur_time() - start);
 }

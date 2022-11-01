@@ -37,7 +37,7 @@ void	*monitoring_thread(void *data)
 	{
 		pthread_mutex_lock(&philo->m_check);
 		pthread_mutex_lock(&philo->info->m_finish);
-		t_no_eat = get_current_ms() - philo->last_eat;
+		t_no_eat = get_cur_time() - philo->last_eat;
 		if (t_no_eat >= philo->info->t_to_die && !philo->info->finish)
 		{
 			print_status(philo, "died");
@@ -54,19 +54,41 @@ void	create_philo(t_info *info)
 	int			i;
 	pthread_t	thread;
 
-	info->t_start = get_current_ms();
 	i = 0;
+	info->t_start = get_cur_time();
 	while (i < info->num_of_philo)
 	{
-		pthread_create(&info->philo[i].thread, NULL, philo, &info->philo[i]);
 		info->philo[i].last_eat = info->t_start;
-		pthread_create(&thread, NULL, monitoring_thread, &info->philo[i]);
+		pthread_create(&info->philo[i].thread, NULL, routine, &info->philo[i]);
+		pthread_create(&thread, NULL, monitoring_thread, &info->philo[i++]);
 		pthread_detach(thread);
-		i++;
 	}
 	if (info->num_must_eat != 0)
 	{
 		pthread_create(&thread, NULL, monitoring_must_eat, &info);
 		pthread_detach(thread);
 	}
+}
+
+void	join_philo(t_info *info)
+{
+	int	i;
+
+	i = 0;
+	while (i < info->num_of_philo)
+	{
+		pthread_join(info->philo[i].thread, NULL);
+		pthread_mutex_destroy(&info->philo[i++].m_check);
+	}
+}
+
+void	free_philo(t_info *info)
+{
+	int	i;
+
+	free(info->philo);
+	i = 0;
+	while (i < info->num_of_philo)
+		pthread_mutex_destroy(&info->m_fork[i++]);
+	free(info->m_fork);
 }
