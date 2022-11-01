@@ -53,7 +53,13 @@ int	init_info(t_info *info, int argc, char **argv)
 	if (parse_args(info, argc, argv) != SUCCESS)
 		return (FAILURE);
 	info->philo = malloc(sizeof(t_philo) * (info->num_of_philo + 1));
+	if (info->philo == NULL)
+		return (FAILURE);
+	memset(info->philo, 0, sizeof(t_philo));
 	info->m_fork = malloc(sizeof(pthread_mutex_t) * (info->num_of_philo + 1));
+	if (info->m_fork == NULL)
+		return (FAILURE);
+	memset(info->philo, 0, sizeof(pthread_mutex_t));
 	pthread_mutex_init(&info->m_finish, NULL);
 	pthread_mutex_init(&info->m_write, NULL);
 	return (SUCCESS);
