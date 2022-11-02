@@ -62,7 +62,7 @@ int		init_info(t_info *info, int argc, char **argv);
 void	init_philo(t_info *info);
 void	create_philo(t_info *info);
 void	join_philo(t_info *info);
-void	free_philo(t_info *info);
+void	exit_philo(t_info *info);
 void	*routine(void *data);
 
 #endif

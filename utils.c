@@ -43,6 +43,6 @@ void	print_status(t_philo *philo, char *msg)
 {
 	pthread_mutex_lock(&philo->info->m_write);
 	printf("%d\t%d\t%s\n", (int)get_timestamp(philo->info->t_start), \
-	philo->id + 1, msg);
+	philo->id, msg);
 	pthread_mutex_unlock(&philo->info->m_write);
 }

@@ -72,7 +72,7 @@ void	init_philo(t_info *info)
 	i = 0;
 	while (i < info->num_of_philo)
 	{
-		info->philo[i].id = i;
+		info->philo[i].id = i + 1;
 		pthread_mutex_init(&info->m_fork[i], NULL);
 		pthread_mutex_init(&info->philo[i].m_check, NULL);
 		if (i == 0)
