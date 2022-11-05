@@ -15,9 +15,13 @@
 void	routine_take_fork(t_philo *philo)
 {
 	pthread_mutex_lock(philo->right);
+	pthread_mutex_lock(&philo->info->m_finish);
 	print_status(philo, "has taken a fork");
+	pthread_mutex_unlock(&philo->info->m_finish);
 	pthread_mutex_lock(philo->left);
+	pthread_mutex_lock(&philo->info->m_finish);
 	print_status(philo, "has taken a fork");
+	pthread_mutex_unlock(&philo->info->m_finish);
 }
 
 void	routine_eat(t_philo *philo)
@@ -39,17 +43,17 @@ void	routine_eat(t_philo *philo)
 
 void	routine_sleeping(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->m_check);
+	pthread_mutex_lock(&philo->info->m_finish);
 	print_status(philo, "is sleeping");
-	pthread_mutex_unlock(&philo->m_check);
+	pthread_mutex_unlock(&philo->info->m_finish);
 	usleep(philo->info->t_to_sleep * 1000);
 }
 
 void	routine_thinking(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->m_check);
+	pthread_mutex_lock(&philo->info->m_finish);
 	print_status(philo, "is thinking");
-	pthread_mutex_unlock(&philo->m_check);
+	pthread_mutex_unlock(&philo->info->m_finish);
 }
 
 void	*routine(void *data)

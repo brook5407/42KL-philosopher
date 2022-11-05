@@ -21,16 +21,28 @@
 # define FAILURE	0
 # define SUCCESS	1
 
+typedef enum e_state
+{
+	EATING,
+	SLEEPING,
+	THINKING,
+	DEAD,
+	TAKING,
+	INITIAL,
+}	t_state;
+
 typedef struct s_philo
 {
 	int				id;
 	pthread_t		thread;
-	struct s_info	*info;
-	pthread_mutex_t	*left;
-	pthread_mutex_t	*right;
-	pthread_mutex_t	m_check;
 	int				count_eat;
 	time_t			last_eat;
+	struct s_info	*info;
+	t_state			state;
+	pthread_mutex_t	*left;
+	pthread_mutex_t	*right;
+	pthread_mutex_t	*m_check;
+	pthread_mutex_t	*m_state;
 }	t_philo;
 
 typedef struct s_info
@@ -46,6 +58,7 @@ typedef struct s_info
 	pthread_mutex_t	m_finish;
 	pthread_mutex_t	m_write;
 	pthread_mutex_t	*m_fork;
+	pthread_mutex_t	*m_death;
 	t_philo			*philo;
 }	t_info;
 
@@ -54,6 +67,10 @@ int		ft_atoi(const char *s);
 
 time_t	get_cur_time(void);
 time_t	get_timestamp(time_t start);
+t_state	get_state(t_philo *philo);
+time_t	get_last_meal(t_philo *philo);
+
+void	set_death_value(t_info *info);
 
 int		print_error(char *msg);
 void	print_status(t_philo *philo, char *msg);

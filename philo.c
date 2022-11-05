@@ -12,9 +12,9 @@
 
 #include "philo.h"
 
-void	*monitoring_check_eat(void *data)
+void	*monitoring_eat(t_info *info)
 {
-	t_info	*info;
+	int	i;
 
 	info = data;
 	while (!info->finish)
@@ -27,32 +27,51 @@ void	*monitoring_check_eat(void *data)
 	return (NULL);
 }
 
-void	*monitoring_check_death(void *data)
+void	*monitoring_death(t_info *info)
 {
-	t_philo		*philo;
-	time_t		t_no_eat;
+	int		i;
+	time_t	t_no_eat;
 
-	philo = data;
-	while (!philo->info->finish)
+	i = 0;
+	while (i < info->num_of_philo)
 	{
-		pthread_mutex_lock(&philo->m_check);
-		pthread_mutex_lock(&philo->info->m_finish);
-		t_no_eat = get_cur_time() - philo->last_eat;
-		if (t_no_eat >= philo->info->t_to_die && !philo->info->finish)
+		if (get_state(info->philo[i]) == EATING)
+			continue ;
+		pthread_mutex_lock(&info->m_finish);
+		t_no_eat = get_cur_time() - get_last_meal(info->philo[i]);
+		if (t_no_eat >= philo->info->t_to_die)
 		{
 			print_status(philo, "died");
-			philo->info->finish = 1;
+			set_death_value(info);
+			return ;
 		}
-		pthread_mutex_unlock(&philo->info->m_finish);
-		pthread_mutex_unlock(&philo->m_check);
+		pthread_mutex_unlock(&info->m_finish);
+		++i;
 	}
-	return (NULL);
+}
+//	t_philo		*philo;
+//	time_t		t_no_eat;
+//
+//	philo = data;
+//	while (!philo->info->finish)
+//	{
+//		pthread_mutex_lock(&philo->m_check);
+//		pthread_mutex_lock(&philo->info->m_finish);
+//		t_no_eat = get_cur_time() - philo->last_eat;
+//		if (t_no_eat >= philo->info->t_to_die && !philo->info->finish)
+//		{
+//			print_status(philo, "died");
+//			philo->info->finish = 1;
+//		}
+//		pthread_mutex_unlock(&philo->info->m_finish);
+//		pthread_mutex_unlock(&philo->m_check);
+//	}
+//	return (NULL);
 }
 
 void	create_philo(t_info *info)
 {
 	int			i;
-	pthread_t	thread;
 
 	info->t_start = get_cur_time();
 	i = 0;
@@ -60,14 +79,7 @@ void	create_philo(t_info *info)
 	{
 		info->philo[i].last_eat = info->t_start;
 		pthread_create(&info->philo[i].thread, NULL, routine, &info->philo[i]);
-		pthread_create(&thread, NULL, monitoring_check_death, &info->philo[i]);
-		pthread_detach(thread);
 		i++;
-	}
-	if (info->num_must_eat != 0)
-	{
-		pthread_create(&thread, NULL, monitoring_check_eat, info);
-		pthread_detach(thread);
 	}
 }
 

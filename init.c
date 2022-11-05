@@ -73,14 +73,16 @@ void	init_philo(t_info *info)
 	while (i < info->num_of_philo)
 	{
 		info->philo[i].id = i + 1;
-		pthread_mutex_init(&info->m_fork[i], NULL);
-		pthread_mutex_init(&info->philo[i].m_check, NULL);
+		info->philo[i].info = info;
+		info->philo[i].state = INITIAL;
+		pthread_mutex_init(info->m_fork[i], NULL);
+		pthread_mutex_init(info->philo[i].m_check, NULL);
+		pthread_mutex_init(info->philo[i].m_state, NULL);
 		if (i == 0)
 			info->philo[i].left = &info->m_fork[info->num_of_philo - 1];
 		else
 			info->philo[i].left = &info->m_fork[i - 1];
 		info->philo[i].right = &info->m_fork[i];
-		info->philo[i].info = info;
 		++i;
 	}
 }
