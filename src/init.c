@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "../include/philo.h"
 
 static int	check_args(int argc, char **argv)
 {
@@ -59,6 +59,7 @@ int	init_info(t_info *info, int argc, char **argv)
 	info->m_fork = malloc(sizeof(pthread_mutex_t) * (info->num_of_philo + 1));
 	if (info->m_fork == NULL)
 		return (FAILURE);
+	info->m_death = malloc(sizeof(pthread_mutex_t));
 	memset(info->philo, 0, sizeof(pthread_mutex_t));
 	pthread_mutex_init(&info->m_finish, NULL);
 	pthread_mutex_init(&info->m_write, NULL);
@@ -75,7 +76,9 @@ void	init_philo(t_info *info)
 		info->philo[i].id = i + 1;
 		info->philo[i].info = info;
 		info->philo[i].state = INITIAL;
-		pthread_mutex_init(info->m_fork[i], NULL);
+		info->philo[i].m_check = malloc(sizeof(pthread_mutex_t));
+		info->philo[i].m_state = malloc(sizeof(pthread_mutex_t));
+		pthread_mutex_init(&info->m_fork[i], NULL);
 		pthread_mutex_init(info->philo[i].m_check, NULL);
 		pthread_mutex_init(info->philo[i].m_state, NULL);
 		if (i == 0)

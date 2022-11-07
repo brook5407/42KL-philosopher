@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "../include/philo.h"
 
 int	ft_isdigit(const char *s)
 {
@@ -39,14 +39,13 @@ int	print_error(char *msg)
 	return (FAILURE);
 }
 
-void	print_status(t_philo *philo, char *msg)
+void	print_status(t_philo *philo, char *msg, char *colour)
 {
+	pthread_mutex_lock(&philo->info->m_write);
 	if (!philo->info->finish)
 	{
-		pthread_mutex_lock(&philo->info->m_write);
-		printf("%d\t%d\t%s\n", (int)get_timestamp(philo->info->t_start), \
-		philo->id, msg);
-		pthread_mutex_unlock(&philo->info->m_write);
+		printf("%s%d\t%d\t%s\n%s", colour, \
+		(int)get_timestamp(philo->info->t_start), philo->id, msg, NC);
 	}
+	pthread_mutex_unlock(&philo->info->m_write);
 }
-

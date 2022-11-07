@@ -9,9 +9,12 @@
 # include <unistd.h>
 # include <stdbool.h>
 
+/* ************************* DEFINES ************************** */
+
 # define NC		"\e[0m"
 # define RED	"\e[31m"
 # define GREEN	"\e[32m"
+# define YELLOW	"\e[33m"
 # define PURPLE	"\e[35m"
 # define CYAN	"\e[36m"
 
@@ -20,6 +23,8 @@
 
 # define FAILURE	0
 # define SUCCESS	1
+
+/* ************************* STRUCT ************************** */
 
 typedef enum e_state
 {
@@ -69,11 +74,14 @@ time_t	get_cur_time(void);
 time_t	get_timestamp(time_t start);
 t_state	get_state(t_philo *philo);
 time_t	get_last_meal(t_philo *philo);
+//int		get_num_eat(t_philo *philo);
 
 void	set_death_value(t_info *info);
+void	set_state(t_philo *philo, t_state state);
+void	set_last_eat(t_philo *philo, time_t time_eat);
 
 int		print_error(char *msg);
-void	print_status(t_philo *philo, char *msg);
+void	print_status(t_philo *philo, char *msg, char *colour);
 
 int		init_info(t_info *info, int argc, char **argv);
 void	init_philo(t_info *info);

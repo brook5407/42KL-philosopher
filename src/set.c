@@ -1,46 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get.c                                              :+:      :+:    :+:   */
+/*   set.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chchin <chchin@student.42kl.edu.my>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/27 14:16:14 by chchin            #+#    #+#             */
-/*   Updated: 2022/10/27 14:16:15 by chchin           ###   ########.fr       */
+/*   Created: 2022/11/05 15:13:06 by chchin            #+#    #+#             */
+/*   Updated: 2022/11/05 15:13:07 by chchin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "../include/philo.h"
 
-time_t	get_cur_time(void)
+void	set_death_value(t_info *info)
 {
-	struct timeval	time;
-
-	gettimeofday(&time, NULL);
-	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+	pthread_mutex_lock(info->m_death);
+	info->finish = 1;
+	pthread_mutex_unlock(info->m_death);
 }
 
-time_t	get_timestamp(time_t start)
+void	set_state(t_philo *philo, t_state state)
 {
-	return (get_cur_time() - start);
-}
-
-t_state	get_state(t_philo *philo)
-{
-	t_state	value;
-
 	pthread_mutex_lock(philo->m_state);
-	value = philo->state;
+	philo->state = state;
 	pthread_mutex_unlock(philo->m_state);
-	return (value);
 }
 
-time_t	get_last_meal(t_philo *philo)
+void	set_last_eat(t_philo *philo, time_t time_eat)
 {
-	time_t	value;
-
 	pthread_mutex_lock(philo->m_check);
-	value = philo->last_eat;
+	philo->last_eat = time_eat;
 	pthread_mutex_unlock(philo->m_check);
-	return (value);
 }

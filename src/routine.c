@@ -10,50 +10,45 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "../include/philo.h"
 
 void	routine_take_fork(t_philo *philo)
 {
-	pthread_mutex_lock(philo->right);
-	pthread_mutex_lock(&philo->info->m_finish);
-	print_status(philo, "has taken a fork");
-	pthread_mutex_unlock(&philo->info->m_finish);
+	set_state(philo, TAKING);
 	pthread_mutex_lock(philo->left);
-	pthread_mutex_lock(&philo->info->m_finish);
-	print_status(philo, "has taken a fork");
-	pthread_mutex_unlock(&philo->info->m_finish);
+	print_status(philo, "has taken a fork", PURPLE);
+	pthread_mutex_lock(philo->right);
+	print_status(philo, "has taken a fork", PURPLE);
+	set_state(philo, INITIAL);
 }
 
 void	routine_eat(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->m_check);
-	philo->last_eat = get_cur_time();
-	pthread_mutex_lock(&philo->info->m_finish);
-	if (!philo->info->finish)
-		print_status(philo, "is eating");
+	set_last_eat(philo, get_cur_time());
+	print_status(philo, "is eating", GREEN);
+	set_state(philo, EATING);
 	philo->count_eat += 1;
 	if (philo->count_eat == philo->info->num_must_eat)
 		philo->info->num_eat_finish += 1;
-	pthread_mutex_unlock(&philo->info->m_finish);
 	usleep(philo->info->t_to_eat * 1000);
+	set_state(philo, INITIAL);
 	pthread_mutex_unlock(philo->right);
 	pthread_mutex_unlock(philo->left);
-	pthread_mutex_unlock(&philo->m_check);
 }
 
 void	routine_sleeping(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->info->m_finish);
-	print_status(philo, "is sleeping");
-	pthread_mutex_unlock(&philo->info->m_finish);
+	set_state(philo, SLEEPING);
+	print_status(philo, "is sleeping", CYAN);
 	usleep(philo->info->t_to_sleep * 1000);
+	set_state(philo, INITIAL);
 }
 
 void	routine_thinking(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->info->m_finish);
-	print_status(philo, "is thinking");
-	pthread_mutex_unlock(&philo->info->m_finish);
+	set_state(philo, THINKING);
+	print_status(philo, "is thinking", YELLOW);
+	set_state(philo, INITIAL);
 }
 
 void	*routine(void *data)
@@ -62,7 +57,12 @@ void	*routine(void *data)
 
 	philo = data;
 	if (philo->id % 2 == 0)
-		usleep(philo->info->t_to_eat * 1000);
+	{
+		if (philo->info->t_to_eat == 0)
+			usleep(1000);
+		else
+			usleep(philo->info->t_to_eat * 1000);
+	}
 	while (!philo->info->finish)
 	{
 		routine_take_fork(philo);
