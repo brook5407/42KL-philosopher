@@ -14,11 +14,17 @@
 
 int	main(int argc, char **argv)
 {
-	t_info	info;
+	t_info		info;
+	pthread_t	thread;
 
 	memset(&info, 0, sizeof(info));
 	if (init_info(&info, argc, argv) != SUCCESS)
 		return (0);
 	init_philo(&info);
+	fork_philo(&info);
+	if (info.num_must_eat)
+		pthread_create(&thread, NULL, check_eat, &info);
+	pthread_create(&thread, NULL, finish_check, &info);
+	join_philo(&info);
 	return (0);
 }

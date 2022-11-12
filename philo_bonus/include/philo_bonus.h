@@ -2,6 +2,7 @@
 # define PHILO_BONUS_H
 
 # include <semaphore.h>
+# include <signal.h>
 # include <pthread.h>
 # include <stdio.h>
 # include <string.h>
@@ -62,7 +63,7 @@ int		ft_atoi(const char *s);
 
 time_t	get_cur_time(void);
 time_t	get_timestamp(t_info *info);
-time_t	get_last_meal(t_philo *philo)
+time_t	get_last_meal(t_philo *philo);
 
 void	set_last_eat(t_philo *philo, time_t time_eat);
 
@@ -72,5 +73,13 @@ void	print_status(t_philo *philo, t_state state);
 
 int		init_info(t_info *info, int argc, char **argv);
 void	init_philo(t_info *info);
-void	*routine(t_philo *philo);
+void	*check_eat(void *data);
+void	routine(t_philo *philo);
+
+void	*finish_check(void *data);
+void	*check_eat(void *data);
+void	*check_death(void *data);
+void	fork_philo(t_info *info);
+void	join_philo(t_info *info);
+
 #endif

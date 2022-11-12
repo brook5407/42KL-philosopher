@@ -12,7 +12,20 @@
 
 #include "../include/philo_bonus.h"
 
-void	*monitoring_check_eat(void *data)
+void	*finish_check(void *data)
+{
+	t_info	*info;
+	int		i;
+
+	info = data;
+	sem_wait(info->s_finish);
+	i = 0;
+	while (i < info->num_of_philo)
+		kill(info->philo[i++].pid, SIGTERM);
+	return (NULL);
+}
+
+void	*check_eat(void *data)
 {
 	t_info	*info;
 	int		i;
@@ -25,7 +38,7 @@ void	*monitoring_check_eat(void *data)
 	return (NULL);
 }
 
-void	*monitoring_check_death(void *data)
+void	*check_death(void *data)
 {
 	t_philo	*philo;
 	time_t	t_no_eat;
@@ -45,53 +58,37 @@ void	*monitoring_check_death(void *data)
 	return (NULL);
 }
 
-void	create_philo(t_info *info)
+void	fork_philo(t_info *info)
 {
 	int			i;
-	pthread_t	thread;
 
 	info->t_start = get_cur_time();
 	i = 0;
 	while (i < info->num_of_philo)
 	{
 		info->philo[i].last_eat = info->t_start;
-		pthread_create(&info->philo[i].thread, NULL, routine, &info->philo[i]);
-		pthread_create(&thread, NULL, monitoring_check_death, &info->philo[i]);
-		pthread_detach(thread);
+		info->philo[i].pid = fork();
+		if (info->philo[i].pid == 0)
+			return (routine(&info->philo[i]));
+		else if (info->philo[i].pid < 0)
+		{
+			print_error("fork failed");
+			exit(1);
+		}
 		i++;
-	}
-	if (info->num_must_eat != 0)
-	{
-		pthread_create(&thread, NULL, monitoring_check_eat, info);
-		pthread_detach(thread);
 	}
 }
 
 void	join_philo(t_info *info)
 {
 	int	i;
+	int	status;
 
 	i = 0;
 	while (i < info->num_of_philo)
-		pthread_join(info->philo[i++].thread, NULL);
+		waitpid(info->philo[i++].pid, &status, 0);
 }
 
-void	exit_philo(t_info *info)
-{
-	int	i;
-
-	i = 0;
-	while (i < info->num_of_philo)
-	{
-		pthread_mutex_destroy(&info->m_fork[i]);
-		pthread_mutex_destroy(info->philo[i].m_check);
-		pthread_mutex_destroy(info->philo[i].m_state);
-		free(info->philo[i].m_check);
-		free(info->philo[i].m_state);
-		i++;
-	}
-	pthread_mutex_destroy(&info->m_finish);
-	pthread_mutex_destroy(&info->m_write);
-	free(info->m_fork);
-	free(info->philo);
-}
+//void	exit_philo(t_info *info)
+//{
+//}

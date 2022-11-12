@@ -17,7 +17,7 @@ void	routine_take_fork(t_philo *philo)
 	sem_wait(philo->info->s_fork);
 	print_status(philo, TAKING);
 	sem_wait(philo->info->s_fork);
-	print_status(philo);
+	print_status(philo, TAKING);
 }
 
 void	routine_eat(t_philo *philo)
@@ -43,11 +43,11 @@ void	routine_thinking(t_philo *philo)
 	print_status(philo, THINKING);
 }
 
-void	*routine(t_philo *philo)
+void	routine(t_philo *philo)
 {
 	pthread_t	thread;
 
-	pthread_create(&thread, NULL, monitor, philo);
+	pthread_create(&thread, NULL, check_death, philo);
 	if (philo->id % 2 == 0)
 	{
 		if (philo->info->t_to_eat == 0)
