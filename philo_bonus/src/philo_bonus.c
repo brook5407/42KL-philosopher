@@ -24,9 +24,11 @@ void	fork_philo(t_info *info)
 		info->philo[i].last_eat = info->t_start;
 		pid = fork();
 		if (pid == 0)
+		{
 			routine(&info->philo[i]);
-		info->philo[i].pid = pid;
-		i++;
+			exit_philo(info);
+		}
+		info->philo[i++].pid = pid;
 	}
 }
 
@@ -42,7 +44,7 @@ void	exit_philo(t_info *info)
 
 	i = 0;
 	while (i < info->num_of_philo)
-		sem_close(info->philo[i].s_check);
+		sem_close(info->philo[i++].s_check);
 	free(info->philo);
 	sem_close(info->s_finish);
 	sem_close(info->s_fork);
@@ -60,9 +62,13 @@ int	main(int argc, char **argv)
 		return (0);
 	init_philo(&info);
 	fork_philo(&info);
-	pthread_create(&thread, NULL, finish_check, &info);
 	if (info.num_must_eat)
+	{
 		pthread_create(&thread, NULL, check_eat, &info);
+		pthread_detach(thread);
+	}
+	pthread_create(&thread, NULL, finish_check, &info);
+	pthread_detach(thread);
 	join_philo();
 	exit_philo(&info);
 	return (0);

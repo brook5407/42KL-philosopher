@@ -37,7 +37,7 @@ $(OBJ_DIR) :
 
 $(OBJ_DIR)/%.o : %.c $(OBJ_DIR)
 	@$(CC) $(CFLAGS) -I $(INC_DIR) -c $< -o $@
-	@printf "$(LF)$(FONT_BLUE)Creating $(FONT_YELLOW)$@$(FONT_BLUE)from $(FONT_YELLOW)$<⏳"
+	@printf "$(LF)$(FONT_BLUE)Creating $(FONT_YELLOW)$@$(FONT_BLUE)from $(FONT_YELLOW)$<"
 
 $(NAME) : $(LIBFT_FILE) $(HEADER) $(OBJS)
 	@printf "$(LF)$(FONT_BLUE)Successfully Created 📦 $(FONT_YELLOW)$@'s Object files\n"

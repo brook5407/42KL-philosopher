@@ -32,7 +32,7 @@ void	*check_eat(void *data)
 
 	info = data;
 	i = 0;
-	while (i < info->num_of_philo)
+	while (i++ < info->num_of_philo)
 		sem_wait(info->s_eat_finish);
 	sem_post(info->s_finish);
 	return (NULL);

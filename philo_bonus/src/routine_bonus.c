@@ -47,9 +47,10 @@ void	routine(t_philo *philo)
 {
 	pthread_t	thread;
 
-	pthread_create(&thread, NULL, check_death, philo);
 	if (philo->id % 2 == 0)
 		usleep(philo->info->t_to_eat * 1000);
+	pthread_create(&thread, NULL, check_death, philo);
+	pthread_detach(thread);
 	while (1)
 	{
 		routine_take_fork(philo);
@@ -57,5 +58,5 @@ void	routine(t_philo *philo)
 		routine_sleeping(philo);
 		routine_thinking(philo);
 	}
-	exit(0);
+	exit (0);
 }

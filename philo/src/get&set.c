@@ -44,3 +44,17 @@ time_t	get_last_meal(t_philo *philo)
 	pthread_mutex_unlock(&philo->m_check);
 	return (value);
 }
+
+void	set_state(t_philo *philo, t_state state)
+{
+	pthread_mutex_lock(&philo->m_state);
+	philo->state = state;
+	pthread_mutex_unlock(&philo->m_state);
+}
+
+void	set_last_eat(t_philo *philo, time_t time_eat)
+{
+	pthread_mutex_lock(&philo->m_check);
+	philo->last_eat = time_eat;
+	pthread_mutex_unlock(&philo->m_check);
+}
