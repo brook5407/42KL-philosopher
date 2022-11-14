@@ -38,7 +38,7 @@ typedef struct s_philo
 	int				count_eat;
 	time_t			last_eat;
 	pid_t			pid;
-	sem_t			*s_last_eat;
+	sem_t			*s_check;
 	struct s_info	*info;
 }	t_philo;
 
@@ -50,7 +50,6 @@ typedef struct s_info
 	time_t	t_to_eat;
 	time_t	t_to_sleep;
 	int		num_must_eat;
-	sem_t	*s_acting;
 	sem_t	*s_eat_finish;
 	sem_t	*s_finish;
 	sem_t	*s_write;
@@ -80,6 +79,7 @@ void	*finish_check(void *data);
 void	*check_eat(void *data);
 void	*check_death(void *data);
 void	fork_philo(t_info *info);
-void	join_philo(t_info *info);
+void	join_philo(void);
+void	exit_philo(t_info *info);
 
 #endif

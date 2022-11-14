@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   routine.c                                          :+:      :+:    :+:   */
+/*   routine_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chchin <chchin@student.42kl.edu.my>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -28,8 +28,8 @@ void	routine_eat(t_philo *philo)
 	if (philo->count_eat == philo->info->num_must_eat)
 		sem_post(philo->info->s_eat_finish);
 	usleep(philo->info->t_to_eat * 1000);
-	sem_wait(philo->info->s_fork);
-	sem_wait(philo->info->s_fork);
+	sem_post(philo->info->s_fork);
+	sem_post(philo->info->s_fork);
 }
 
 void	routine_sleeping(t_philo *philo)
@@ -49,12 +49,7 @@ void	routine(t_philo *philo)
 
 	pthread_create(&thread, NULL, check_death, philo);
 	if (philo->id % 2 == 0)
-	{
-		if (philo->info->t_to_eat == 0)
-			usleep(500);
-		else
-			usleep(philo->info->t_to_eat * 1000);
-	}
+		usleep(philo->info->t_to_eat * 1000);
 	while (1)
 	{
 		routine_take_fork(philo);

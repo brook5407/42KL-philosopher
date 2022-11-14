@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
+/*   init_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: brook <brook@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -54,7 +54,7 @@ static sem_t	*philo_sem_init(const char *name, unsigned int value)
 	if (sem != SEM_FAILED)
 		return (sem);
 	sem_unlink(name);
-	return (sem_open(name, O_CREAT | O_EXCL, 0644, value));
+	return (sem);
 }
 
 int	init_info(t_info *info, int argc, char **argv)
@@ -66,9 +66,7 @@ int	init_info(t_info *info, int argc, char **argv)
 	info->philo = malloc(sizeof(t_philo) * (info->num_of_philo + 1));
 	if (info->philo == NULL)
 		return (FAILURE);
-	memset(info->philo, 0, sizeof(t_philo));
 	info->s_fork = philo_sem_init("forks", info->num_of_philo + 1);
-	info->s_acting = philo_sem_init("acting", 1);
 	info->s_finish = philo_sem_init("finish", 0);
 	info->s_eat_finish = philo_sem_init("eat finish", 0);
 	info->s_write = philo_sem_init("write", 1);
@@ -85,8 +83,10 @@ void	init_philo(t_info *info)
 	{
 		info->philo[i].id = i + 1;
 		info->philo[i].info = info;
-		tmp = philo_sem_join("s_last_eat", i);
-		info->philo[i].s_last_eat = philo_sem_init(tmp, 1);
+		info->philo[i].count_eat = 0;
+		info->philo[i].last_eat = 0;
+		tmp = philo_sem_join("check", info->philo[i].id);
+		info->philo[i].s_check = philo_sem_init(tmp, 1);
 		free(tmp);
 		++i;
 	}

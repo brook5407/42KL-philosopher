@@ -29,15 +29,15 @@ time_t	get_last_meal(t_philo *philo)
 {
 	time_t	value;
 
-	sem_wait(philo->s_last_eat);
+	sem_wait(philo->s_check);
 	value = philo->last_eat;
-	sem_post(philo->s_last_eat);
+	sem_post(philo->s_check);
 	return (value);
 }
 
 void	set_last_eat(t_philo *philo, time_t time_eat)
 {
-	sem_wait(philo->s_last_eat);
+	sem_wait(philo->s_check);
 	philo->last_eat = time_eat;
-	sem_wait(philo->s_last_eat);
+	sem_post(philo->s_check);
 }
