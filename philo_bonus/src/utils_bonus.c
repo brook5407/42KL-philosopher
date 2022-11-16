@@ -12,15 +12,29 @@
 
 #include "../include/philo_bonus.h"
 
-int	ft_isdigit(const char *s)
+void	print_status(t_philo *philo, t_state state)
 {
-	while (*s)
-	{
-		if (*s < '0' || *s > '9')
-			return (FAILURE);
-		s++;
-	}
-	return (SUCCESS);
+	time_t	ms;
+
+	sem_wait(philo->table->s_write);
+	ms = get_timestamp(philo->table);
+	if (state == TAKING)
+		printf("%ld\t%d\t%s\n", ms, philo->id, "has taken a fork");
+	else if (state == EATING)
+		printf("%ld\t%d\t%s\n", ms, philo->id, "is eating");
+	else if (state == SLEEPING)
+		printf("%ld\t%d\t%s\n", ms, philo->id, "is sleeping");
+	else if (state == THINKING)
+		printf("%ld\t%d\t%s\n", ms, philo->id, "is thinking");
+	else if (state == DIED)
+		printf("%ld\t%d\t%s\n", ms, philo->id, "is die");
+	sem_post(philo->table->s_write);
+}
+
+int	print_error(char *msg)
+{
+	printf("%sERROR: %s.%s\n", RED, msg, NC);
+	return (FAILURE);
 }
 
 int	ft_atoi(const char *s)
@@ -31,6 +45,17 @@ int	ft_atoi(const char *s)
 	while (*s)
 		num = num * 10 + (*s++ - '0');
 	return (num);
+}
+
+int	ft_isdigit(const char *s)
+{
+	while (*s)
+	{
+		if (*s < '0' || *s > '9')
+			return (FAILURE);
+		s++;
+	}
+	return (SUCCESS);
 }
 
 char	*philo_sem_join(char *str, int num)
@@ -52,29 +77,4 @@ char	*philo_sem_join(char *str, int num)
 	}
 	ret[i] = 0;
 	return (ret);
-}
-
-int	print_error(char *msg)
-{
-	printf("%sERROR: %s.%s\n", RED, msg, NC);
-	return (FAILURE);
-}
-
-void	print_status(t_philo *philo, t_state state)
-{
-	int	time;
-
-	time = (int)get_timestamp(philo->info);
-	sem_wait(philo->info->s_write);
-	if (state == TAKING)
-		printf("%d\t%d\t%s\n", time, philo->id, "has taken a fork");
-	else if (state == EATING)
-		printf("%d\t%d\t%s\n", time, philo->id, "is eating");
-	else if (state == SLEEPING)
-		printf("%d\t%d\t%s\n", time, philo->id, "is sleeping");
-	else if (state == THINKING)
-		printf("%d\t%d\t%s\n", time, philo->id, "is thinking");
-	else if (state == DIED)
-		printf("%d\t%d\t%s\n", time, philo->id, "is die");
-	sem_post(philo->info->s_write);
 }

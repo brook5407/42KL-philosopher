@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chchin <chchin@student.42kl.edu.my>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/16 10:35:48 by chchin            #+#    #+#             */
+/*   Updated: 2022/11/16 10:35:50 by chchin           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_BONUS_H
 # define PHILO_BONUS_H
 
@@ -19,8 +31,8 @@
 # define MIN_ARGS	4
 # define MAX_ARGS	5
 
-# define FAILURE	0
-# define SUCCESS	1
+# define FAILURE	1
+# define SUCCESS	0
 
 typedef enum e_state
 {
@@ -39,10 +51,10 @@ typedef struct s_philo
 	time_t			last_eat;
 	pid_t			pid;
 	sem_t			*s_check;
-	struct s_info	*info;
+	struct s_table	*table;
 }	t_philo;
 
-typedef struct s_info
+typedef struct s_table
 {
 	int		num_of_philo;
 	time_t	t_start;
@@ -53,33 +65,27 @@ typedef struct s_info
 	sem_t	*s_eat_finish;
 	sem_t	*s_finish;
 	sem_t	*s_write;
-	sem_t	*s_fork;
-	t_philo	*philo;
-}	t_info;
+	sem_t	*s_forks;
+	t_philo	*philos;
+}	t_table;
 
-int		ft_isdigit(const char *s);
-int		ft_atoi(const char *s);
+/* ************************ FUNCTION **************************/
 
-time_t	get_cur_time(void);
-time_t	get_timestamp(t_info *info);
-time_t	get_last_meal(t_philo *philo);
+int			ft_atoi(const char *s);
+int			ft_isdigit(const char *s);
+int			print_error(char *msg);
+void		print_status(t_philo *philo, t_state state);
+char		*philo_sem_join(char *str, int num);
 
-void	set_last_eat(t_philo *philo, time_t time_eat);
+time_t		get_cur_time(void);
+time_t		get_timestamp(t_table *table);
 
-char	*philo_sem_join(char *str, int num);
-int		print_error(char *msg);
-void	print_status(t_philo *philo, t_state state);
+int			init(t_table *table, int argc, char *argv[]);
 
-int		init_info(t_info *info, int argc, char **argv);
-void	init_philo(t_info *info);
-void	*check_eat(void *data);
-void	routine(t_philo *philo);
+void		routine(t_philo *philo);
 
-void	*finish_check(void *data);
-void	*check_eat(void *data);
-void	*check_death(void *data);
-void	fork_philo(t_info *info);
-void	join_philo(void);
-void	exit_philo(t_info *info);
+void		*finish_check(void *arg);
+void		*check_win(void *argv);
+void		*check_die(void *argv);
 
 #endif

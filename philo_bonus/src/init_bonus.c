@@ -12,6 +12,15 @@
 
 #include "../include/philo_bonus.h"
 
+static sem_t	*philo_sem_init(const char *name, unsigned int value)
+{
+	sem_t	*sem;
+
+	sem = sem_open(name, O_CREAT | O_EXCL, 0644, value);
+	sem_unlink(name);
+	return (sem);
+}
+
 static int	check_args(int argc, char **argv)
 {
 	int	i;
@@ -23,71 +32,61 @@ static int	check_args(int argc, char **argv)
 	i = 0;
 	while (++i < argc)
 	{
-		if (!ft_isdigit(argv[i]))
+		if (ft_isdigit(argv[i]))
 			return (print_error("Only allow positive integer"));
 	}
 	return (SUCCESS);
 }
 
-static int	parse_args(t_info *info, int argc, char *argv[])
+static int	parsing_args(t_table *table, int argc, char *argv[])
 {
-	info->num_of_philo = ft_atoi(argv[1]);
-	if (info->num_of_philo <= 0)
+	table->num_of_philo = ft_atoi(argv[1]);
+	if (table->num_of_philo <= 0)
 		return (print_error("Minimum one philosopher required"));
-	info->t_to_die = ft_atoi(argv[2]);
-	info->t_to_eat = ft_atoi(argv[3]);
-	info->t_to_sleep = ft_atoi(argv[4]);
+	table->t_to_die = ft_atoi(argv[2]);
+	table->t_to_eat = ft_atoi(argv[3]);
+	table->t_to_sleep = ft_atoi(argv[4]);
 	if (argc - 1 == MAX_ARGS)
 	{
-		info->num_must_eat = ft_atoi(argv[MAX_ARGS]);
-		if (info->num_must_eat <= 0)
+		table->num_must_eat = ft_atoi(argv[MAX_ARGS]);
+		if (table->num_must_eat <= 0)
 			return (print_error("Minimum one time must eat required"));
 	}
 	return (SUCCESS);
 }
 
-static sem_t	*philo_sem_init(const char *name, unsigned int value)
-{
-	sem_t	*sem;
-
-	sem = sem_open(name, O_CREAT | O_EXCL, 0644, value);
-	if (sem != SEM_FAILED)
-		return (sem);
-	sem_unlink(name);
-	return (sem);
-}
-
-int	init_info(t_info *info, int argc, char **argv)
-{
-	if (check_args(argc, argv) != SUCCESS)
-		return (FAILURE);
-	if (parse_args(info, argc, argv) != SUCCESS)
-		return (FAILURE);
-	info->philo = malloc(sizeof(t_philo) * (info->num_of_philo + 1));
-	if (info->philo == NULL)
-		return (FAILURE);
-	info->s_fork = philo_sem_init("forks", info->num_of_philo + 1);
-	info->s_finish = philo_sem_init("finish", 0);
-	info->s_eat_finish = philo_sem_init("eat finish", 0);
-	info->s_write = philo_sem_init("write", 1);
-	return (SUCCESS);
-}
-
-void	init_philo(t_info *info)
+static void	init_philos(t_table *table)
 {
 	int		i;
 	char	*tmp;
 
 	i = 0;
-	while (i < info->num_of_philo)
+	while (i < table->num_of_philo)
 	{
-		info->philo[i].id = i + 1;
-		info->philo[i].info = info;
-		info->philo[i].count_eat = 0;
-		info->philo[i].last_eat = 0;
-		tmp = philo_sem_join("check", info->philo[i].id);
-		info->philo[i].s_check = philo_sem_init(tmp, 1);
+		tmp = philo_sem_join("philo", i);
+		table->philos[i].s_check = philo_sem_init(tmp, 1);
 		free(tmp);
+		table->philos[i].id = i + 1;
+		table->philos[i].table = table;
+		table->philos[i].count_eat = 0;
+		table->philos[i].last_eat = 0;
 		++i;
 	}
+}
+
+int	init(t_table *table, int argc, char **argv)
+{
+	if (check_args(argc, argv) != SUCCESS)
+		return (FAILURE);
+	if (parsing_args(table, argc, argv) != SUCCESS)
+		return (FAILURE);
+	table->philos = malloc(sizeof(t_philo) * (table->num_of_philo + 1));
+	if (table->philos == NULL)
+		return (FAILURE);
+	init_philos(table);
+	table->s_forks = philo_sem_init("forks", table->num_of_philo + 1);
+	table->s_finish = philo_sem_init("finish", 0);
+	table->s_eat_finish = philo_sem_init("eat finish", 0);
+	table->s_write = philo_sem_init("write", 1);
+	return (SUCCESS);
 }

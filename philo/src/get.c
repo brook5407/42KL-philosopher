@@ -25,16 +25,6 @@ time_t	get_timestamp(t_info *info)
 	return (get_cur_time() - info->t_start);
 }
 
-t_state	get_state(t_philo *philo)
-{
-	t_state	value;
-
-	pthread_mutex_lock(&philo->m_state);
-	value = philo->state;
-	pthread_mutex_unlock(&philo->m_state);
-	return (value);
-}
-
 time_t	get_last_meal(t_philo *philo)
 {
 	time_t	value;
@@ -45,16 +35,22 @@ time_t	get_last_meal(t_philo *philo)
 	return (value);
 }
 
-void	set_state(t_philo *philo, t_state state)
+int	get_finish(t_info *info)
 {
-	pthread_mutex_lock(&philo->m_state);
-	philo->state = state;
-	pthread_mutex_unlock(&philo->m_state);
+	int	value;
+
+	pthread_mutex_lock(&info->m_finish);
+	value = info->finish;
+	pthread_mutex_unlock(&info->m_finish);
+	return (value);
 }
 
-void	set_last_eat(t_philo *philo, time_t time_eat)
+int	get_eat_finish(t_info *info)
 {
-	pthread_mutex_lock(&philo->m_check);
-	philo->last_eat = time_eat;
-	pthread_mutex_unlock(&philo->m_check);
+	int	value;
+
+	pthread_mutex_lock(&info->m_eat_finish);
+	value = info->num_eat_finish;
+	pthread_mutex_unlock(&info->m_eat_finish);
+	return (value);
 }

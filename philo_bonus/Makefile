@@ -1,7 +1,8 @@
-NAME = philo
+NAME = philo_bonus
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -pthread
+#CFLAGS += -g -fsanitize=thread
 
 RM = rm -rf
 
@@ -45,8 +46,8 @@ $(NAME) : $(LIBFT_FILE) $(HEADER) $(OBJS)
 	@$(CC) $(CFLAGS) -I $(INC_DIR) $(OBJS) -o $@
 	@printf "$(FONT_BLUE)Successfully Created $(FONT_YELLOW)🎓 $@ \n$(NO_COLOUR)"
 	@printf "$(FONT_BLUE)#====================================================START===================================================================\n"
-	@printf "$(FONT_PURPLE)❗Run-$(FONT_YELLOW)./philo [number_of_philosophers] [time_to_die] [time_to_eat] [time_to_sleep]\n$(NO_COLOUR)"
-	@printf "$(FONT_PURPLE)❗Or -$(FONT_YELLOW)./philo [number_of_philosophers] [time_to_die] [time_to_eat] [time_to_sleep] [number_of_times_each_philosopher_must_eat]\n$(NO_COLOUR)"
+	@printf "$(FONT_PURPLE)❗Run-$(FONT_YELLOW)./$(NAME) [number_of_philosophers] [time_to_die] [time_to_eat] [time_to_sleep]\n$(NO_COLOUR)"
+	@printf "$(FONT_PURPLE)❗Or -$(FONT_YELLOW)./$(NAME) [number_of_philosophers] [time_to_die] [time_to_eat] [time_to_sleep] [number_of_times_each_philosopher_must_eat]\n$(NO_COLOUR)"
 	@printf "$(FONT_BLUE)#=============================================================================================================================\n$(NO_COLOUR)"
 
 clean :

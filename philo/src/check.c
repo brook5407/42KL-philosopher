@@ -12,37 +12,33 @@
 
 #include "../include/philo.h"
 
-void	*monitoring_check_eat(void *data)
+void	*check_eat(void *data)
 {
 	t_info	*info;
 
 	info = data;
-	while (!info->finish)
+	while (!get_finish(info))
 	{
-		pthread_mutex_lock(&info->m_finish);
-		if (info->num_eat_finish == info->num_of_philo)
-			info->finish = 1;
-		pthread_mutex_unlock(&info->m_finish);
+		if (info->num_of_philo == get_eat_finish(info))
+			set_finish(info);
 	}
 	return (NULL);
 }
 
-void	*monitoring_check_death(void *data)
+void	*check_death(void *data)
 {
 	t_philo	*philo;
 	time_t	t_no_eat;
 
 	philo = data;
-	while (!philo->info->finish)
+	while (!get_finish(philo->info))
 	{
-		pthread_mutex_lock(&philo->info->m_finish);
 		t_no_eat = get_cur_time() - get_last_meal(philo);
-		if (t_no_eat >= philo->info->t_to_die && !philo->info->finish)
+		if (t_no_eat >= philo->info->t_to_die && !get_finish(philo->info))
 		{
-			set_state(philo, DIED);
-			print_status(philo);
+			print_status(philo, DIED);
+			set_finish(philo->info);
 		}
-		pthread_mutex_unlock(&philo->info->m_finish);
 	}
 	return (NULL);
 }

@@ -12,33 +12,35 @@
 
 #include "../include/philo_bonus.h"
 
-void	routine_take_fork(t_philo *philo)
+static void	routine_take_fork(t_philo *philo)
 {
-	sem_wait(philo->info->s_fork);
+	sem_wait(philo->table->s_forks);
 	print_status(philo, TAKING);
-	sem_wait(philo->info->s_fork);
+	sem_wait(philo->table->s_forks);
 	print_status(philo, TAKING);
 }
 
-void	routine_eat(t_philo *philo)
+static void	routine_eat(t_philo *philo)
 {
+	sem_wait(philo->s_check);
+	philo->last_eat = get_cur_time();
 	print_status(philo, EATING);
-	set_last_eat(philo, get_cur_time());
 	philo->count_eat += 1;
-	if (philo->count_eat == philo->info->num_must_eat)
-		sem_post(philo->info->s_eat_finish);
-	usleep(philo->info->t_to_eat * 1000);
-	sem_post(philo->info->s_fork);
-	sem_post(philo->info->s_fork);
+	if (philo->count_eat == philo->table->num_must_eat)
+		sem_post(philo->table->s_eat_finish);
+	usleep(philo->table->t_to_eat * 1000);
+	sem_post(philo->table->s_forks);
+	sem_post(philo->table->s_forks);
+	sem_post(philo->s_check);
 }
 
-void	routine_sleeping(t_philo *philo)
+static void	routine_sleeping(t_philo *philo)
 {
 	print_status(philo, SLEEPING);
-	usleep(philo->info->t_to_sleep * 1000);
+	usleep(philo->table->t_to_sleep * 1000);
 }
 
-void	routine_thinking(t_philo *philo)
+static void	routine_thinking(t_philo *philo)
 {
 	print_status(philo, THINKING);
 }
@@ -47,10 +49,9 @@ void	routine(t_philo *philo)
 {
 	pthread_t	thread;
 
+	pthread_create(&thread, NULL, check_die, philo);
 	if (philo->id % 2 == 0)
-		usleep(philo->info->t_to_eat * 1000);
-	pthread_create(&thread, NULL, check_death, philo);
-	pthread_detach(thread);
+		usleep(philo->table->t_to_eat * 1000);
 	while (1)
 	{
 		routine_take_fork(philo);
@@ -58,5 +59,5 @@ void	routine(t_philo *philo)
 		routine_sleeping(philo);
 		routine_thinking(philo);
 	}
-	exit (0);
+	exit(0);
 }

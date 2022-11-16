@@ -12,64 +12,57 @@
 
 #include "../include/philo_bonus.h"
 
-void	fork_philo(t_info *info)
+static void	fork_philos(t_table *table)
 {
 	int	i;
 	int	pid;
 
-	info->t_start = get_cur_time();
 	i = 0;
-	while (i < info->num_of_philo)
+	table->t_start = get_cur_time();
+	while (i < table->num_of_philo)
 	{
-		info->philo[i].last_eat = info->t_start;
+		table->philos[i].last_eat = table->t_start;
 		pid = fork();
 		if (pid == 0)
-		{
-			routine(&info->philo[i]);
-			exit_philo(info);
-		}
-		info->philo[i++].pid = pid;
+			routine(&table->philos[i]);
+		table->philos[i++].pid = pid;
 	}
 }
 
-void	join_philo(void)
+static void	join_philos(void)
 {
 	while (waitpid(-1, NULL, 0) != -1)
 		;
 }
 
-void	exit_philo(t_info *info)
+static void	exit_philos(t_table *table)
 {
-	int	i;
+	int		i;
 
 	i = 0;
-	while (i < info->num_of_philo)
-		sem_close(info->philo[i++].s_check);
-	free(info->philo);
-	sem_close(info->s_finish);
-	sem_close(info->s_fork);
-	sem_close(info->s_write);
-	sem_close(info->s_eat_finish);
+	while (i < table->num_of_philo)
+		sem_close(table->philos[i++].s_check);
+	free(table->philos);
+	sem_close(table->s_finish);
+	sem_close(table->s_write);
+	sem_close(table->s_forks);
+	sem_close(table->s_eat_finish);
 }
 
-int	main(int argc, char **argv)
+int	main(int argc, char *argv[])
 {
-	t_info		info;
+	t_table		table;
 	pthread_t	thread;
 
-	memset(&info, 0, sizeof(info));
-	if (init_info(&info, argc, argv) != SUCCESS)
-		return (0);
-	init_philo(&info);
-	fork_philo(&info);
-	if (info.num_must_eat)
-	{
-		pthread_create(&thread, NULL, check_eat, &info);
-		pthread_detach(thread);
-	}
-	pthread_create(&thread, NULL, finish_check, &info);
+	memset(&table, 0, sizeof(table));
+	if (init(&table, argc, argv))
+		return (1);
+	fork_philos(&table);
+	if (table.num_must_eat != 0)
+		pthread_create(&thread, NULL, check_win, &table);
+	pthread_create(&thread, NULL, finish_check, &table);
 	pthread_detach(thread);
-	join_philo();
-	exit_philo(&info);
+	join_philos();
+	exit_philos(&table);
 	return (0);
 }

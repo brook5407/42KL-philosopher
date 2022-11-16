@@ -23,13 +23,13 @@ static void	create_philo(t_info *info)
 	{
 		info->philo[i].last_eat = info->t_start;
 		pthread_create(&info->philo[i].thread, NULL, routine, &info->philo[i]);
-		pthread_create(&thread, NULL, monitoring_check_death, &info->philo[i]);
+		pthread_create(&thread, NULL, check_death, &info->philo[i]);
 		pthread_detach(thread);
 		i++;
 	}
 	if (info->num_must_eat != 0)
 	{
-		pthread_create(&thread, NULL, monitoring_check_eat, info);
+		pthread_create(&thread, NULL, check_eat, info);
 		pthread_detach(thread);
 	}
 }
@@ -52,7 +52,6 @@ static void	exit_philo(t_info *info)
 	{
 		pthread_mutex_destroy(&info->m_fork[i]);
 		pthread_mutex_destroy(&info->philo[i].m_check);
-		pthread_mutex_destroy(&info->philo[i].m_state);
 		i++;
 	}
 	pthread_mutex_destroy(&info->m_finish);

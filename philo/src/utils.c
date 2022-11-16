@@ -39,27 +39,24 @@ int	print_error(char *msg)
 	return (FAILURE);
 }
 
-void	print_status(t_philo *philo)
+void	print_status(t_philo *philo, t_state state)
 {
 	int	time;
 
 	pthread_mutex_lock(&philo->info->m_write);
-	if (!philo->info->finish)
+	if (!get_finish(philo->info))
 	{
 		time = (int)get_timestamp(philo->info);
-		if (philo->state == TAKING)
+		if (state == TAKING)
 			printf("%d\t%d\t%s\n", time, philo->id, "has taken a fork");
-		else if (philo->state == EATING)
+		else if (state == EATING)
 			printf("%d\t%d\t%s\n", time, philo->id, "is eating");
-		else if (philo->state == SLEEPING)
+		else if (state == SLEEPING)
 			printf("%d\t%d\t%s\n", time, philo->id, "is sleeping");
-		else if (philo->state == THINKING)
+		else if (state == THINKING)
 			printf("%d\t%d\t%s\n", time, philo->id, "is thinking");
-		else if (philo->state == DIED)
-		{
+		else if (state == DIED)
 			printf("%d\t%d\t%s\n", time, philo->id, "is die");
-			philo->info->finish += 1;
-		}
 	}
 	pthread_mutex_unlock(&philo->info->m_write);
 }

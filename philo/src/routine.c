@@ -14,21 +14,19 @@
 
 void	routine_take_fork(t_philo *philo)
 {
-	set_state(philo, TAKING);
 	pthread_mutex_lock(philo->left);
-	print_status(philo);
+	print_status(philo, TAKING);
 	pthread_mutex_lock(philo->right);
-	print_status(philo);
+	print_status(philo, TAKING);
 }
 
 void	routine_eat(t_philo *philo)
 {
-	set_state(philo, EATING);
-	print_status(philo);
+	print_status(philo, EATING);
 	set_last_eat(philo, get_cur_time());
 	philo->count_eat += 1;
 	if (philo->count_eat == philo->info->num_must_eat)
-		philo->info->num_eat_finish += 1;
+		set_eat_finish(philo->info);
 	usleep(philo->info->t_to_eat * 1000);
 	pthread_mutex_unlock(philo->right);
 	pthread_mutex_unlock(philo->left);
@@ -36,15 +34,13 @@ void	routine_eat(t_philo *philo)
 
 void	routine_sleeping(t_philo *philo)
 {
-	set_state(philo, SLEEPING);
-	print_status(philo);
+	print_status(philo, SLEEPING);
 	usleep(philo->info->t_to_sleep * 1000);
 }
 
 void	routine_thinking(t_philo *philo)
 {
-	set_state(philo, THINKING);
-	print_status(philo);
+	print_status(philo, THINKING);
 }
 
 void	*routine(void *data)
@@ -59,7 +55,7 @@ void	*routine(void *data)
 		else
 			usleep(philo->info->t_to_eat * 1000);
 	}
-	while (!philo->info->finish)
+	while (!get_finish(philo->info))
 	{
 		routine_take_fork(philo);
 		routine_eat(philo);

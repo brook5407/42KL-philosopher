@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   check.c                                            :+:      :+:    :+:   */
+/*   check_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chchin <chchin@student.42kl.edu.my>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,47 +12,52 @@
 
 #include "../include/philo_bonus.h"
 
-void	*finish_check(void *data)
+void	*finish_check(void *arg)
 {
-	t_info	*info;
 	int		i;
+	t_table	*table;
 
-	info = data;
-	sem_wait(info->s_finish);
+	table = arg;
+	sem_wait(table->s_finish);
 	i = 0;
-	while (i < info->num_of_philo)
-		kill(info->philo[i++].pid, SIGTERM);
+	while (i < table->num_of_philo)
+		kill(table->philos[i++].pid, SIGTERM);
 	return (NULL);
 }
 
-void	*check_eat(void *data)
+void	*check_win(void *arg)
 {
-	t_info	*info;
+	t_table	*table;
 	int		i;
 
-	info = data;
+	table = arg;
 	i = 0;
-	while (i++ < info->num_of_philo)
-		sem_wait(info->s_eat_finish);
-	sem_post(info->s_finish);
+	while (i++ < table->num_of_philo)
+		sem_wait(table->s_eat_finish);
+	sem_post(table->s_finish);
 	return (NULL);
 }
 
-void	*check_death(void *data)
+void	*check_die(void *arg)
 {
 	t_philo	*philo;
-	time_t	t_no_eat;
+	time_t	ms;
 
-	philo = data;
+	philo = arg;
 	while (1)
 	{
-		t_no_eat = get_cur_time() - get_last_meal(philo);
-		if (t_no_eat >= philo->info->t_to_die)
+		sem_wait(philo->s_check);
+		sem_wait(philo->table->s_write);
+		ms = get_cur_time() - philo->last_eat;
+		if (ms >= philo->table->t_to_die)
 		{
-			print_status(philo, DIED);
-			sem_post(philo->info->s_finish);
+			printf("%d\t%d\t %s\n", (int)get_timestamp(philo->table), \
+				philo->id + 1, "died");
+			sem_post(philo->table->s_finish);
 			return (NULL);
 		}
+		sem_post(philo->table->s_write);
+		sem_post(philo->s_check);
 	}
 	return (NULL);
 }
