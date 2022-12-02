@@ -20,6 +20,8 @@
 	<a href="#%EF%B8%8F-usage">Usage</a>
 	<span> · </span>
   	<a href="#-content">Content</a>
+	<span> · </span>
+  	<a href="#-instructions">Instruction</a>
 </h3>
 
 ---
@@ -121,7 +123,7 @@ In this version the specific rules are:
 - They have no states in memory but the number of available forks is represented by a semaphore.
 - Each philosopher should be a process and the main process should not be a philosopher.
 
-### Instructions
+## 📝 Instructions
 
 **1. Compiling the program**
 
