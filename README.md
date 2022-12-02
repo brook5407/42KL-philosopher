@@ -181,6 +181,3 @@ if time_eat < time_slp
 - `make clean` -- deletes object files.
 - `make fclean` -- deletes object files and philo.
 - `make re` -- `fclean` + `make`.
-   
- ## 📋 Testing
-
