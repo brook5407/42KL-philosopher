@@ -17,11 +17,9 @@
 <h3 align="center">
 	<a href="#-about">About</a>
 	<span> · </span>
-	<a href="#%EF%B8%8F-usage">Usage</a>
-	<span> · </span>
   	<a href="#-content">Content</a>
 	<span> · </span>
-  	<a href="#-instructions">Instruction</a>
+	<a href="#%EF%B8%8F-usage">Usage</a>
 </h3>
 
 ---
@@ -30,12 +28,6 @@
 
 > _In this project, you will learn the basics of threading a process. You will learn how to make threads. You will discover the mutex._
 
-
-## 🛠️ Usage
-
-### Requirements
-
-The function is written in C language and thus needs the **`gcc` compiler** and some standard **C libraries** to run.
 
 ## 🚀 Content
 
@@ -123,7 +115,13 @@ In this version the specific rules are:
 - They have no states in memory but the number of available forks is represented by a semaphore.
 - Each philosopher should be a process and the main process should not be a philosopher.
 
-## 📝 Instructions
+## 🛠️ Usage
+
+### Requirements
+
+The function is written in C language and thus needs the **`gcc` compiler** and some standard **C libraries** to run.
+
+### Instructions
 
 **1. Compiling the program**
 
